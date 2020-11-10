@@ -7,7 +7,8 @@ package wechat
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/astaxie/beego/config"
+	"github.com/astaxie/beego/adapter/config"
+	"github.com/pkg/errors"
 	"time"
 )
 
@@ -24,7 +25,7 @@ type WxTools struct {
 //wxapi工具类初始化方法
 //
 //工厂模式创建类，从配置中读取企业微信信息
-func NewWxTools(configFile string) *WxTools{
+func NewWxTools(configFile string) (*WxTools,error){
 
 	//初始化类及其属性
 	// BUG(liubin): a bug in code
@@ -33,6 +34,7 @@ func NewWxTools(configFile string) *WxTools{
 	//读取配置
 	configer, err := config.NewConfig("ini", tools.configFile)
 	if (err!=nil) {
+		return nil ,errors.Wrap(err,"error while reade config file")
 		//fmt.Println("NewConfig of secert.....")
 		//fmt.Println(err.Error())
 		//CE(err)
@@ -48,7 +50,7 @@ func NewWxTools(configFile string) *WxTools{
 	// Output:
 	//output test
 	//返货类指针
-	return tools
+	return tools,nil
 }
 
 // 获取access_token
