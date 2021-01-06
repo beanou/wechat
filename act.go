@@ -7,6 +7,7 @@ package wechat
 import (
 	// "encoding/json"
 	"fmt"
+	"github.com/gnrliubin/config"
 	// "github.com/pkg/errors"
 	// "time"
 )
@@ -32,9 +33,12 @@ func NewWxTools(configFile string) (*WxTools, error) {
 	// 配置文件结构体实例
 	conf := WeConf{}
 	// 使用工具读取配置文件中的信息
-	jsonUtil := NewJson()
-	jsonUtil.Load(configFile, &conf)
+	jsonUtil := jsc.NewJson()
 
+	err := jsonUtil.Load(configFile, &conf)
+	if err != nil {
+		fmt.Println(err)
+	}
 	fmt.Println("loading json...")
 	fmt.Println(conf)
 	// 将配置信息写入工具类属性中
