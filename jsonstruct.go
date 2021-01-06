@@ -23,3 +23,7 @@ func (this *JsonStruct) Load(confFile string, v interface{}) {
 
 	}
 }
+
+func (this *JsonStruct) Save(confFile string, v interface{}) {
+
+}
