@@ -7,7 +7,7 @@ package wechat
 import (
 	// "encoding/json"
 	"fmt"
-	"github.com/gnrliubin/config"
+	"github.com/beanou/config"
 	// "github.com/pkg/errors"
 	// "time"
 )
