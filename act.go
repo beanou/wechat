@@ -37,7 +37,7 @@ func NewWxTools(configFile string) (*WxTools, error) {
 
 	err := jsonUtil.Load(configFile, &conf)
 	if err != nil {
-		return nil, errors.Wrap(err, "wxtools init err")
+		return nil, errors.Wrap(err, "config file load err")
 	}
 	fmt.Println("loading json...")
 	fmt.Println(conf)
