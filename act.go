@@ -8,7 +8,7 @@ import (
 	// "encoding/json"
 	"fmt"
 	"github.com/beanou/config/json"
-	// "github.com/pkg/errors"
+	"github.com/pkg/errors"
 	// "time"
 )
 
@@ -37,7 +37,7 @@ func NewWxTools(configFile string) (*WxTools, error) {
 
 	err := jsonUtil.Load(configFile, &conf)
 	if err != nil {
-		fmt.Println(err)
+		return nil, errors.Wrap(err, "wxtools init err")
 	}
 	fmt.Println("loading json...")
 	fmt.Println(conf)
