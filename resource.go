@@ -8,7 +8,7 @@
 
 	根据userid获取通讯录成员详细信息
 	func GetUserDetailUri (accessToken string ,userId string) string {}
- */
+*/
 
 package wechat
 
@@ -23,8 +23,8 @@ import "fmt"
 //"access_token": "accesstoken000001",
 //"expires_in": 7200
 //}
-func GetAccessTokenUri(cropid string , secret string) string {
-	return fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s",cropid,secret)
+func GetAccessTokenUri(cropid string, secret string) string {
+	return fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s", cropid, secret)
 }
 
 //根据code获取成员信息的URL
@@ -50,7 +50,7 @@ func GetAccessTokenUri(cropid string , secret string) string {
 //"errmsg": "invalid code"
 //}
 func GetUserInfoUri(accessToken string, code string) string {
-	return fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=%s&code=%s",accessToken,code)
+	return fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=%s&code=%s", accessToken, code)
 }
 
 //通过userid获取成员详细信息
@@ -127,8 +127,6 @@ func GetUserInfoUri(accessToken string, code string) string {
 //		]
 //	}
 //}
-func GetUserDetailUri (accessToken string ,userId interface{}) string {
-	return fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token=%s&userid=%s",accessToken,userId)
+func GetUserDetailUri(accessToken string, userId interface{}) string {
+	return fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token=%s&userid=%s", accessToken, userId)
 }
-
-
