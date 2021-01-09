@@ -33,9 +33,8 @@ func NewWxTools(configFile string) (*WxTools, error) {
 	// 配置文件结构体实例
 	conf := WeConf{}
 	// 使用工具读取配置文件中的信息
-	jsonUtil := jsc.NewJson()
 
-	err := jsonUtil.Load(configFile, &conf)
+	err := jsc.Load(configFile, &conf)
 	if err != nil {
 		return nil, errors.Wrap(err, "config file load err")
 	}
