@@ -36,7 +36,7 @@ func NewWxTools(configFile string) (*WxTools, error) {
 	conf := WeConf{}
 	// 使用工具读取配置文件中的信息
 
-	err := jsc.Load(configFile, &conf)
+	err := jsonconf.Load(configFile, &conf)
 	if err != nil {
 		return nil, errors.Wrap(err, "config file load err")
 	}
@@ -79,7 +79,7 @@ func (this *WxTools) GetToken() (interface{}, error) {
 	// if err != nil {
 	//     return nil, errors.Wrap(err, "read config file error")
 	// }
-	err := jsc.Load(this.tokenFile, this.token)
+	err := jsonconf.Load(this.tokenFile, this.token)
 	if err != nil {
 		return nil, errors.Wrap(err, "token cache load err")
 	}
@@ -106,7 +106,7 @@ func (this *WxTools) GetToken() (interface{}, error) {
 
 		//token写入缓存文件
 		this.token.Expires = this.token.Expires + time.Now().Unix()
-		jsc.Save(this.tokenFile, this.token)
+		jsonconf.Save(this.tokenFile, this.token)
 		// configer.Set("token::access_token", this.token.Token)
 		// configer.Set("token::expires", fmt.Sprintf("%d", this.token.Expires))
 		// configer.SaveConfigFile("conf/token.ini")
