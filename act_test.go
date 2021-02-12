@@ -12,7 +12,11 @@ func TestAct(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	wxTools.GetToken()
+	// wxTools.GetToken()
+	_, err = wxTools.GetUserInfo("ksdljfsdf8sdfsdf09<F9>990sdf")
 
+	if err != nil {
+		fmt.Println(err)
+	}
 	fmt.Println(wxTools)
 }

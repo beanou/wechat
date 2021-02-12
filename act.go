@@ -32,15 +32,7 @@ func NewWxTools(configFile string) (*WxTools, error) {
 	tools := new(WxTools)
 	// 写入配置文件路径
 	tools.configFile = configFile
-	// 配置文件结构体实例
-	// conf := WeConf{}
-	// 使用工具读取配置文件中的信息
-
-	// err := jsonconf.Load(configFile, &conf)
-	// if err != nil {
-	// return nil, errors.Wrap(err, "config file load err")
-	// }
-
+	//读取配置文件
 	conf, err := ini.Load(tools.configFile)
 	if err != nil {
 		return nil, errors.Wrap(err, "get config falid!!!")
@@ -52,23 +44,7 @@ func NewWxTools(configFile string) (*WxTools, error) {
 	tools.secret = conf.Section("wechat").Key("Secret").String()
 	tools.tokenFile = conf.Section("wechat").Key("TokenFile").String()
 	tools.token = new(AccessToken)
-	//  //初始化类及其属性
-	// // BUG(liubin): a bug in code
-	// tools := new(WxTools)
-	// tools.configFile = configFile
-	// //读取配置
-	// configer, err := config.NewConfig("ini", tools.configFile)
-	// if err != nil {
-	//     return nil, errors.Wrap(err, "error while reade config file")
-	// }
-	// tools.cacheFile = configer.String("wx::cache")
-	// tools.appid = configer.String("wx::appid")
-	// //tools.redirectUri = configer.String("wx::redirect_uri")
-	// tools.state = configer.String("wx::state")
-	// tools.secret = configer.String("wx::secret")
-	// tools.token = new(AccessToken)
-	//
-	// //返货类指针
+	//返货类指针
 	return tools, nil
 }
 
@@ -79,23 +55,14 @@ func NewWxTools(configFile string) (*WxTools, error) {
 */
 func (this *WxTools) GetToken() (interface{}, error) {
 	//读取配置文件
-	// configer, err := config.NewConfig("ini", this.cacheFile)
-	// if err != nil {
-	//     return nil, errors.Wrap(err, "read config file error")
-	// }
-	// err := jsonconf.Load(this.tokenFile, this.token)
-	// if err != nil {
-	// return nil, errors.Wrap(err, "token cache load err")
-	// }
 	conf, err := ini.Load(this.tokenFile)
 	if err != nil {
 		return nil, errors.Wrap(err, "can't find token file")
 	}
+
+	//配置文件中的信息存入类属性
 	this.token.Token = conf.Section("").Key("access_token").MustString("")
 	this.token.Expires = conf.Section("").Key("expires").MustInt64(0)
-	//配置文件中的信息存入类属性
-	// this.token.Token = configer.String("token::access_token")
-	// this.token.Expires, _ = configer.Int64("token::expires")
 
 	//token过期时重新获取token
 	if this.token.Expires == 0 || this.token.Expires <= time.Now().Unix() {
@@ -119,9 +86,6 @@ func (this *WxTools) GetToken() (interface{}, error) {
 		conf.Section("").Key("access_token").SetValue(this.token.Token)
 		conf.Section("").Key("expires").SetValue(fmt.Sprintf("%d", this.token.Expires))
 		conf.SaveTo(this.tokenFile)
-		// configer.Set("token::access_token", this.token.Token)
-		// configer.Set("token::expires", fmt.Sprintf("%d", this.token.Expires))
-		// configer.SaveConfigFile("conf/token.ini")
 	}
 
 	return this.token.Token, nil
