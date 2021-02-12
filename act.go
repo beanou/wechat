@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/beanou/config/json"
+	"gopkg.in/ini.v1"
+
 	"github.com/pkg/errors"
-	// "time"
 )
 
 type WxTools struct {
@@ -33,20 +33,24 @@ func NewWxTools(configFile string) (*WxTools, error) {
 	// 写入配置文件路径
 	tools.configFile = configFile
 	// 配置文件结构体实例
-	conf := WeConf{}
+	// conf := WeConf{}
 	// 使用工具读取配置文件中的信息
 
-	err := jsonconf.Load(configFile, &conf)
+	// err := jsonconf.Load(configFile, &conf)
+	// if err != nil {
+	// return nil, errors.Wrap(err, "config file load err")
+	// }
+
+	conf, err := ini.Load(tools.configFile)
 	if err != nil {
-		return nil, errors.Wrap(err, "config file load err")
+		return nil, errors.Wrap(err, "get config falid!!!")
 	}
-	fmt.Println("loading json...")
-	fmt.Println(conf)
+
 	// 将配置信息写入工具类属性中
-	tools.appid = conf.Appid
-	tools.state = conf.State
-	tools.secret = conf.Secret
-	tools.tokenFile = conf.TokenFile
+	tools.appid = conf.Section("wechat").Key("Appid").String()
+	tools.state = conf.Section("wechat").Key("State").String()
+	tools.secret = conf.Section("wechat").Key("Secret").String()
+	tools.tokenFile = conf.Section("wechat").Key("TokenFile").String()
 	tools.token = new(AccessToken)
 	//  //初始化类及其属性
 	// // BUG(liubin): a bug in code
@@ -79,11 +83,16 @@ func (this *WxTools) GetToken() (interface{}, error) {
 	// if err != nil {
 	//     return nil, errors.Wrap(err, "read config file error")
 	// }
-	err := jsonconf.Load(this.tokenFile, this.token)
+	// err := jsonconf.Load(this.tokenFile, this.token)
+	// if err != nil {
+	// return nil, errors.Wrap(err, "token cache load err")
+	// }
+	conf, err := ini.Load(this.tokenFile)
 	if err != nil {
-		return nil, errors.Wrap(err, "token cache load err")
+		return nil, errors.Wrap(err, "can't find token file")
 	}
-
+	this.token.Token = conf.Section("").Key("access_token").MustString("")
+	this.token.Expires = conf.Section("").Key("expires").MustInt64(0)
 	//配置文件中的信息存入类属性
 	// this.token.Token = configer.String("token::access_token")
 	// this.token.Expires, _ = configer.Int64("token::expires")
@@ -106,7 +115,10 @@ func (this *WxTools) GetToken() (interface{}, error) {
 
 		//token写入缓存文件
 		this.token.Expires = this.token.Expires + time.Now().Unix()
-		jsonconf.Save(this.tokenFile, this.token)
+		// jsonconf.Save(this.tokenFile, this.token)
+		conf.Section("").Key("access_token").SetValue(this.token.Token)
+		conf.Section("").Key("expires").SetValue(fmt.Sprintf("%d", this.token.Expires))
+		conf.SaveTo(this.tokenFile)
 		// configer.Set("token::access_token", this.token.Token)
 		// configer.Set("token::expires", fmt.Sprintf("%d", this.token.Expires))
 		// configer.SaveConfigFile("conf/token.ini")
