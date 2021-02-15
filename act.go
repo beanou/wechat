@@ -17,16 +17,17 @@ import (
 type WxTools struct {
 	configFile string //配置文件
 	tokenFile  string //token缓存文件
-	appid      string
-	state      string
-	secret     string
+	agentId    string //应用id
+	appid      string //微信id
+	state      string //用户自定义安全码
+	secret     string //应用安全码
 	token      *AccessToken
 }
 
 //wxapi工具类初始化方法
 //
 //工厂模式创建类，从配置中读取企业微信信息
-func NewWxTools(configFile string) (*WxTools, error) {
+func NewWxTools(configFile string, agentId string) (*WxTools, error) {
 
 	// 生产微信工具类实力
 	tools := new(WxTools)
@@ -39,9 +40,11 @@ func NewWxTools(configFile string) (*WxTools, error) {
 	}
 
 	// 将配置信息写入工具类属性中
+	agentSection := fmt.Sprintf("wechat.%s", agentId)
+	tools.agentId = agentId
 	tools.appid = conf.Section("wechat").Key("Appid").String()
 	tools.state = conf.Section("wechat").Key("State").String()
-	tools.secret = conf.Section("wechat").Key("Secret").String()
+	tools.secret = conf.Section(agentSection).Key("Secret").String()
 	tools.tokenFile = conf.Section("wechat").Key("TokenFile").String()
 	tools.token = new(AccessToken)
 	//返货类指针
@@ -61,8 +64,8 @@ func (this *WxTools) GetToken() (interface{}, error) {
 	}
 
 	//配置文件中的信息存入类属性
-	this.token.Token = conf.Section("").Key("access_token").MustString("")
-	this.token.Expires = conf.Section("").Key("expires").MustInt64(0)
+	this.token.Token = conf.Section(this.agentId).Key("access_token").MustString("")
+	this.token.Expires = conf.Section(this.agentId).Key("expires").MustInt64(0)
 
 	//token过期时重新获取token
 	if this.token.Expires == 0 || this.token.Expires <= time.Now().Unix() {
@@ -83,8 +86,8 @@ func (this *WxTools) GetToken() (interface{}, error) {
 		//token写入缓存文件
 		this.token.Expires = this.token.Expires + time.Now().Unix()
 		// jsonconf.Save(this.tokenFile, this.token)
-		conf.Section("").Key("access_token").SetValue(this.token.Token)
-		conf.Section("").Key("expires").SetValue(fmt.Sprintf("%d", this.token.Expires))
+		conf.Section(this.agentId).Key("access_token").SetValue(this.token.Token)
+		conf.Section(this.agentId).Key("expires").SetValue(fmt.Sprintf("%d", this.token.Expires))
 		conf.SaveTo(this.tokenFile)
 	}
 
