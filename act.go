@@ -38,6 +38,10 @@ func NewWxTools(configFile string, agentId string) (*WxTools, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "get config falid!!!")
 	}
+	//验证agentId是否存在
+	if agentId == "" {
+		return nil, errors.Wrap(err, "no agentId")
+	}
 
 	// 将配置信息写入工具类属性中
 	agentSection := fmt.Sprintf("wechat.%s", agentId)

@@ -7,7 +7,7 @@ import (
 
 func TestAct(t *testing.T) {
 
-	wxTools, err := NewWxTools("conf/app.ini", "1000009")
+	wxTools, err := NewWxTools("conf/app.ini", "")
 	if err != nil {
 		fmt.Println(err)
 	}
